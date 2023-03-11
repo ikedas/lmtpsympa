@@ -1,0 +1,84 @@
+%YAML 1.1
+---
+## Primary domain: What is defined by `domain` parameter in `sympa.conf`
+domain: mail.example.org
+## Virtual domains if any
+#domains:
+#  - serv1.example.org
+#  - serv2.example.com
+#  - serv3.example.net
+## Base directory of list directories, $EXPLDIR by default
+home: /path/to/directory
+## Incoming spool, $SPOOLDIR/msg by default
+queue: /path/to/directory/msg
+## Bounce incoming spool, $SPOOLDIR/bounce by default
+queuebounce: /path/to/directory/bounce
+## Automatic list creation spool, $SPOOLDIR/automatic by default.
+## Not yet implemented.
+#queueautomatic: /path/to/directory/automatic
+## Prefix of VERP return address
+#bounce_email_prefix: bounce
+## Suffix of list return address 
+#return_path_suffix: "-owner",
+## Address suffixes to verify
+#list_check_suffixes:
+#  - request
+#  - owner
+#  - editor
+#  - unsubscribe
+#  - subscribe
+## Local part of Sympa email address
+#email: sympa
+## Local part of listmaster email address
+#listmaster_email: listmaster
+
+## Families for automatic list creation.  Not yet implemented.
+#families:
+  #- auto-family1: ^auto-.*@mail[.]example[.]org$
+  #- auto-family2: ^auto-.*@serv1[.]example[.]org$
+
+## Configuration of LMTP/SMTP service
+service:
+  ## What the server listens. host:port (TCP socket) or pathname (UNIX domain
+  ## socket).  By default ":24" for LMTP or ":smtp" for (E)SMTP is used.
+  addr:
+  ## Runs as (E)SMTP server.  By default runs as LMTP server.
+  #esmtp: false
+  ## The host name the server presents at greeting.
+  #iam: localhost
+  ## Maximum number of envelope recipients in each session.
+  ## Available only with LMTP mode. Always 1 with (E)SMTP mode.
+  #max_rcpt: 50
+  ## Maximum length in bytes of each message.
+  #max_size: 5242880
+  ## Strict style of MAIL
+  #strict_mail: true
+  ## Network read timeout in seconds.
+  #read_timeout: 300
+  ## Network write timeout in seconds.
+  #write_timeout: 300
+  ## Maximum number of simultaneous sessions.
+  #max_connections: 100
+  ## Run as the other user.
+  #user:
+  ## Additionally, change the group.
+  #group:
+  ## The file mode of UNIX domain socket.
+  #mode: 666
+  ## File creation mode mask.
+  #umask: 027
+  ## LMTP/(E)SMTP over TLS.  Not yet implemented.
+  #tls: {}
+  ## Authentication.  Not yet implemented.
+  #auth: {}
+  ## Allow insecure AUTH.  Not yet implemented.
+  #allow_insecure_auth: false
+
+## Advanced customization.
+## Make changes only if you know what you are doing!
+#custom:
+  ## Add "Received:" header field.
+  #add_received: true
+  ## The output record delimiter.
+  #eol: "\n"
+
