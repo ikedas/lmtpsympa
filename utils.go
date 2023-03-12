@@ -64,7 +64,8 @@ func toLowerASCII(s string) string {
 }
 
 func uniqueId() string {
-	return fmt.Sprintf("%010d", rand.Intn((2<<31)-1)+2)
+	// Not exceeding 32 bit signed int; 0 and 1 do not appear.
+	return fmt.Sprintf("%010d", rand.Intn(int(^uint32(2)>>1))+2)
 }
 
 func validateDomain(d string) error {
