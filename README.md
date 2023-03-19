@@ -18,14 +18,22 @@ mailing list management software (MLM).
     [`lmtpsympa.yml.sample`](https://github.com/ikedas/lmtpsympa/blob/main/lmtpsympa.yml.sample)
     in the repository.
 
-Now you may run `lmtpsympa lmtpsympa.yml` to launch LMTPSympa.
+To launch LMTPSympa, you may run either
+``` bash
+lmtpsympa lmtpsympa.yml
+```
+or
+``` bash
+lmtpsympa < lmtpsympa.yml
+```
+
 LMTPSympa safely terminates on receipt of TERM or INT signal.
 
 ## Deploy
 
-The following is an example of deployment with Systemd and Postfix.
+The following is an example of deployment with Systemd/Launchd and Postfix.
 
-### Configure LMTPSympa
+### 1. Configure LMTPSympa
 
 Create `lmtpsympa.yml`:
 ``` yaml
@@ -44,10 +52,51 @@ service:
   mode: 660
 ```
 
-### Register the service
+### 2. Register the service
+
+#### With Launchd
+
+Create `/Library/LaunchDaemons/community.sympa.lmtpsympa.plist`:
+``` xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>community.sympa.lmtpsympa</string>
+    <key>UserName</key>
+    <string>sympa</string>
+    <key>GroupName</key>
+    <string>postfix</string>
+    <key>Program</key>
+    <string>/usr/local/bin/lmtpsympa</string>
+    <key>StandardInPath</key>
+    <string>/usr/local/etc/lmtpsympa.yml</string>
+    <key>KeepAlive</key>
+    <true/>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>Umask</key>
+    <string>027</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/lmtpsympa.log</string>
+</dict>
+</plist>
+```
+Note that, On macOS, this file has to be owned by `root:wheel` and writable by `root`;
+`GroupName` may have to be `_postfix`.
+
+Then you may run
+``` bash
+$ sudo launchctl load -Fw /Library/LaunchDaemons/community.sympa.lmtpsympa.plist
+```
+to start the service immediately.
+
+#### With Systemd
 
 Create `lmtpsympa.service`:
-``` code
+``` ini
 [Unit]
 Description=LMTPSympa - LMTP/SMTP frontend for Sympa
 After=syslog.target network.target
@@ -66,7 +115,13 @@ WantedBy=multi-user.target
 put it into appropriate place, `/etc/systemd/system`, `/usr/lib/systemd/system`
 or somewhere, and run `systemctl daemon-reload`.
 
-Then you may run `systemctl start lmtpsympa.service` to start the service.
+Then you may run
+``` bash
+# systemctl start lmtpsympa.service
+```
+to start the service immediately.
+
+#### Confirm the operation
 
 *   If you configured LMTPSympa to use UNIX domain socket, make sure that
     the socket path is created and its permission allows Postfix to access to.
@@ -77,7 +132,7 @@ Then you may run `systemctl start lmtpsympa.service` to start the service.
 *   If you configured to use TCP socket, make sure that appropriate port is
     listened.
 
-### Integrate to the MTA
+### 3. Integrate to the MTA
 
 Edit `main.cf` and the other configuration files of Postfix:
 
@@ -115,7 +170,7 @@ Edit `main.cf` and the other configuration files of Postfix:
     Note that the default value of `relay_domains` is the value of
     `mydestination`. It should therefore normally be included.
 
-### Mofification on Sympa
+### 4. Modification on Sympa
 
 *   If all deliveries to mailing list service are made by LMTPSympa,
     you may disable update of mail aliases.
