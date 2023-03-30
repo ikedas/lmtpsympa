@@ -240,12 +240,6 @@ func listenAndServe(s *Server, useTLS bool) error {
 		l = tls.NewListener(l, s.TLSConfig)
 	}
 
-	defer func() {
-		if network == "unix" {
-			os.Remove(addr)
-		}
-	}()
-
 	if s.Username != "" {
 		var userU *user.User
 
