@@ -1,6 +1,6 @@
 module github.com/ikedas/lmtpsympa
 
-go 1.17
+go 1.18
 
 require (
 	github.com/emersion/go-smtp v0.16.0

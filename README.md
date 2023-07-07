@@ -5,7 +5,7 @@ mailing list management software (MLM).
 
 ## Install
 
-1.  Install Go.  Go v1.17.x or later is required.
+1.  Install Go.  Go v1.18.x or later is required.
 
 2.  Build LMTPSympa.  Run:
     ``` bash
