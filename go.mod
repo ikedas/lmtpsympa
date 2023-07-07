@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/emersion/go-smtp v0.16.0
-	github.com/goccy/go-yaml v1.10.0
+	github.com/goccy/go-yaml v1.11.0
 	golang.org/x/net v0.10.0
 )
 
