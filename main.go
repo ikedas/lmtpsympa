@@ -333,20 +333,6 @@ func listenAndServe(s *Server, useTLS bool) error {
 	return s.Serve(l)
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
-	done := make(chan error, 1)
-	go func() {
-		done <- s.Close()
-	}()
-
-	select {
-	case err := <-done:
-		return err
-	case <-ctx.Done():
-		return ctx.Err()
-	}
-}
-
 // The Backend implements SMTP server methods.
 type Backend struct {
 	Config *Config
