@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -135,7 +134,12 @@ func NewConfig() (*Config, error) {
 		}
 		config.S.FileUmask = int(mode64)
 	}
-	config.S.LMTP = !config.S.ESMTP_
+	if config.S.ESMTP_ {
+		// TODO: Handle "subsequent failure" with (E)SMTP
+		config.S.MaxRecipients = 1
+	} else {
+		config.S.LMTP = true
+	}
 	if config.S.SocketMode_ != "" {
 		mode64, err := strconv.ParseUint(config.S.SocketMode_, 8, 9)
 		if err != nil {
@@ -175,7 +179,7 @@ func NewServer(be *Backend) *Server {
 	s.ReadTimeout = be.Config.S.ReadTimeout
 	s.WriteTimeout = be.Config.S.WriteTimeout
 	s.MaxMessageBytes = be.Config.S.MaxMessageBytes
-	// s.MaxRecipients = be.Config.S.MaxRecipients // See Rcpt()
+	s.MaxRecipients = be.Config.S.MaxRecipients
 	s.AllowInsecureAuth = be.Config.S.AllowInsecureAuth
 	s.Strict = be.Config.S.Strict
 	s.AuthDisabled = be.Config.S.AuthDisabled
@@ -422,27 +426,6 @@ func (s *Session) Mail(from string, opts *smtp.MailOptions) error {
 
 func (s *Session) Rcpt(to string) error {
 	log.Printf("%s to=<%s>", s.Id, to)
-	c := s.Backend.Config
-
-	if c.S.LMTP {
-		// Workaround for a bug github.com/emersion/go-smtp#213
-		max := c.S.MaxRecipients
-		if 0 < max && max == len(s.RcptTos) {
-			return &smtp.SMTPError{
-				Code:         452,
-				EnhancedCode: smtp.EnhancedCode{4, 5, 3},
-				Message:      fmt.Sprintf("Maximum limit of %v recipients reached", max),
-			}
-
-		}
-	} else if len(s.RcptTos) == 1 {
-		// TODO: Handle "subsequent failure" with (E)SMTP
-		return &smtp.SMTPError{
-			Code:         452,
-			EnhancedCode: smtp.EnhancedCode{4, 5, 3},
-			Message:      "Maximum limit of 1 recipient reached",
-		}
-	}
 
 	if err := validateEmail(to); err != nil {
 		return &smtp.SMTPError{

@@ -3,7 +3,7 @@ module github.com/ikedas/lmtpsympa
 go 1.18
 
 require (
-	github.com/emersion/go-smtp v0.16.0
+	github.com/emersion/go-smtp v0.17.0
 	github.com/goccy/go-yaml v1.11.0
 	golang.org/x/net v0.10.0
 )
