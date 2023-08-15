@@ -51,7 +51,7 @@ service:
   #max_rcpt: 50
   ## Maximum length in bytes of each message.
   #max_size: 5242880
-  ## Strict style of MAIL
+  ## [Deprecated] Strict style of MAIL
   #strict_mail: true
   ## Network read timeout in seconds.
   #read_timeout: 300

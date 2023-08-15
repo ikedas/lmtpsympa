@@ -30,10 +30,9 @@ type Config_service struct {
 	ESMTP_            bool   `yaml:"esmtp"`
 	Domain            string `yaml:"iam"`
 	MaxRecipients     int    `yaml:"max_rcpt"`
-	MaxMessageBytes   int    `yaml:"max_size"`
+	MaxMessageBytes   int64  `yaml:"max_size"`
 	MaxLineLength     int
 	AllowInsecureAuth bool `yaml:"allow_insecure_auth"`
-	Strict            bool `yaml:"strict_mail"`
 	ReadTimeout       time.Duration
 	ReadTimeout_      uint `yaml:"read_timeout"`
 	WriteTimeout      time.Duration
@@ -94,7 +93,6 @@ func NewConfig() (*Config, error) {
 	config.S.MaxConnections = 100
 	config.S.MaxRecipients = 50
 	config.S.MaxMessageBytes = 5 * 1024 * 1024
-	config.S.Strict = true
 	config.S.SocketMode_ = "666"
 	config.S.FileUmask_ = "027"
 	config.S.ReadTimeout_ = 300
@@ -181,7 +179,6 @@ func NewServer(be *Backend) *Server {
 	s.MaxMessageBytes = be.Config.S.MaxMessageBytes
 	s.MaxRecipients = be.Config.S.MaxRecipients
 	s.AllowInsecureAuth = be.Config.S.AllowInsecureAuth
-	s.Strict = be.Config.S.Strict
 	s.AuthDisabled = be.Config.S.AuthDisabled
 
 	s.MaxConnections = be.Config.S.MaxConnections
@@ -410,7 +407,7 @@ func (s *Session) Mail(from string, opts *smtp.MailOptions) error {
 	return nil
 }
 
-func (s *Session) Rcpt(to string) error {
+func (s *Session) Rcpt(to string, opts *smtp.RcptOptions) error {
 	log.Printf("%s to=<%s>", s.Id, to)
 
 	if err := validateEmail(to); err != nil {
