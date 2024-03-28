@@ -203,6 +203,8 @@ func listenAndServe(s *Server, useTLS bool) error {
 	if addr == "" {
 		if s.LMTP {
 			addr = ":24"
+		} else if useTLS {
+			addr = ":465"
 		} else {
 			addr = ":smtp"
 		}

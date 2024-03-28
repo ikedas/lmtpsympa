@@ -40,7 +40,7 @@ queuebounce: /path/to/directory/bounce
 ## Configuration of LMTP/SMTP service
 service:
   ## What the server listens. host:port (TCP socket) or pathname (UNIX domain
-  ## socket).  By default ":24" for LMTP or ":smtp" for (E)SMTP is used.
+  ## socket).  By default ":24" for LMTP or ":smtp"/":465" for (E)SMTP is used.
   addr:
   ## Runs as (E)SMTP server.  By default runs as LMTP server.
   #esmtp: false
