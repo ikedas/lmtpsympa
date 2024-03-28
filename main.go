@@ -347,7 +347,7 @@ func (be *Backend) NewSession(c *smtp.Conn) (smtp.Session, error) {
 	log.Printf("%s client=<%s>, hello=<%s>, bound=<%s>", id, ra, hh, la)
 
 	if be.Config.S.LMTP {
-		return &LMTPSession{&Session{
+		return &LMTPSession{Session{
 			Id:         id,
 			Backend:    be,
 			RemoteAddr: ra,
@@ -379,7 +379,7 @@ type Session struct {
 }
 
 type LMTPSession struct {
-	*Session
+	Session
 }
 
 func (s *Session) AuthPlain(username, password string) error {
